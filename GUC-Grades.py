@@ -119,7 +119,9 @@ else:
             file.write(json.dumps(courses_grades))
         
     
-
+def displayUpdates(updates_dictionary):
+    for i in range(0, len(updates_dictionary)):
+        displayCourse(updates_dictionary, i)
 
 
 # Display Courses on the terminal
