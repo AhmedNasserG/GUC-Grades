@@ -121,7 +121,10 @@ else:
     
 def displayUpdates(updates_dictionary):
     for i in range(0, len(updates_dictionary)):
-        displayCourse(updates_dictionary, i)
+        if list(updates_dictionary.keys())[i] == 'Midterms Grades':
+            displayMidtermGrades(updates_dictionary, i)
+        else:
+            displayCourse(updates_dictionary, i)
 
 
 # Display Courses on the terminal
