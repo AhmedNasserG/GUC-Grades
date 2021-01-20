@@ -104,12 +104,21 @@ def getUpdatesDictionary(last_courses_grades, courses_grades):
             updates[course] = course_updates
     return updates
 
+
+updates_dictionary = {}
+
 if not os.path.isfile(".courses_grades.json"):
     with open('.courses_grades.json', 'w') as file:
         file.write(json.dumps(courses_grades))
-# else:
-    # TODO check if there are any updates in the grades  
-    # 1) impelement a method to compare two dictionaries one from stored json file and one from GUC Admin system
+else:
+    with open('.courses_grades.json') as json_file: 
+        last_courses_grades = json.load(json_file) 
+    updates_dictionary = getUpdatesDictionary(last_courses_grades, courses_grades)
+    if len(updates_dictionary) != 0:
+        with open('.courses_grades.json', 'w') as file:
+            file.write(json.dumps(courses_grades))
+        
+    
 
 
 
