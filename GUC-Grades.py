@@ -177,9 +177,14 @@ def displayMidtermGrades(courses_grades, i):
 # Display interactive menu
 
 def displayCourseInteractive(courses_grades):
-    terminal_menu = TerminalMenu(list(courses_grades.keys()))
+    options = list(courses_grades.keys())
+    if len(updates_dictionary) != 0:
+        options = ['There are new updates in grades check now'] + options
+    terminal_menu = TerminalMenu(options)
     choice_index = terminal_menu.show()
-    if choice_index == 0:
+    if options[choice_index] == 'There are new updates in grades check now':
+        displayUpdates(updates_dictionary)
+    elif options[choice_index] == 'Midterms Grades':
         displayMidtermGrades(courses_grades, 0)
     else:
         displayCourse(courses_grades, choice_index)
