@@ -87,7 +87,22 @@ for i in tqdm(range(1, len(courses)),desc ="Getting Grades"):
     courses_grades[courses[i]] = getDataFromTable(browser.find_element_by_xpath('//*[@id="nttTr"]/td/table').get_attribute('outerHTML'))
 
 
+# getting new updates in grades if there are any and return them as a dictionary
 
+def getUpdatesDictionary(last_courses_grades, courses_grades):
+    updates = {}
+    for course, elements in courses_grades.items():
+        elements = sorted(elements)
+        last_courses_grades[course] = sorted(last_courses_grades[course])
+        course_updates = []
+        for i in elements:
+            try:
+                last_courses_grades[course].index(i)
+            except:
+                course_updates.append(i)
+        if len(course_updates) != 0:
+            updates[course] = course_updates
+    return updates
 
 if not os.path.isfile(".courses_grades.json"):
     with open('.courses_grades.json', 'w') as file:
