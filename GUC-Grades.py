@@ -31,6 +31,9 @@ chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("headless")
 
 browser = webdriver.Chrome(options=chrome_options)
+
+offline_mode = False
+
 while True:
     try:
         browser.get(f'http://{username}:{password}@student.guc.edu.eg/external/student/grade/CheckGrade.aspx')
@@ -42,7 +45,9 @@ while True:
         if choice_index == 0:
             continue
         elif choice_index == 1:
-            print('Coming Soon')
+            offline_mode = True
+            browser.close()
+            break
         else:
             browser.close()
             exit()
@@ -52,12 +57,8 @@ while True:
 # TODO Welcoming the user
 # TODO handle error (if there is an error user can choose to get grades locally or try again)
 
-select = Select(browser.find_element_by_xpath('//*[@id="smCrsLst"]'))
-courses = [x.text for x in browser.find_elements_by_tag_name("option")]
-
 
 # Extact Data from html table of grades
-
 def getDataFromTable(table):
     table_soup = bs(table, 'html.parser')
     datasets = []
@@ -77,7 +78,6 @@ def getDataFromTable(table):
 
 
 # get Midterm Grades from html table
-
 def getMedtermGradesFromTable(table):
     table_soup = bs(table, 'html.parser')
     datasets = []
@@ -94,19 +94,29 @@ def getMedtermGradesFromTable(table):
  
 courses_grades = {}
 
-courses_grades['Midterms Grades'] = getMedtermGradesFromTable(browser.find_element_by_xpath('//*[@id="midDg"]').get_attribute('outerHTML'))
-
-
-for i in tqdm(range(1, len(courses)),desc ="Getting Grades"):
+if offline_mode:
+    with open('.courses_grades.json') as json_file: 
+        courses_grades = json.load(json_file) 
+else:
+    # Get available courses names
     select = Select(browser.find_element_by_xpath('//*[@id="smCrsLst"]'))
-    select.select_by_index(i)
-    courses_grades[courses[i]] = getDataFromTable(browser.find_element_by_xpath('//*[@id="nttTr"]/td/table').get_attribute('outerHTML'))
+    courses = [x.text for x in browser.find_elements_by_tag_name("option")]
 
 
-browser.close()
+    # Get midterm grades
+    courses_grades['Midterms Grades'] = getMedtermGradesFromTable(browser.find_element_by_xpath('//*[@id="midDg"]').get_attribute('outerHTML'))
+
+    # Get courses grades
+    for i in tqdm(range(1, len(courses)),desc ="Getting Grades"):
+        select = Select(browser.find_element_by_xpath('//*[@id="smCrsLst"]'))
+        select.select_by_index(i)
+        courses_grades[courses[i]] = getDataFromTable(browser.find_element_by_xpath('//*[@id="nttTr"]/td/table').get_attribute('outerHTML'))
+
+    # Close the driver
+    browser.close()
+
 
 # getting new updates in grades if there are any and return them as a dictionary
-
 def getUpdatesDictionary(last_courses_grades, courses_grades):
     updates = {}
     for course, elements in courses_grades.items():
