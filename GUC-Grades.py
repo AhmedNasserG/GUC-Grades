@@ -18,12 +18,12 @@ def getDataFromTable(table):
             element.append(item.text.strip())
         datasets.append(element)
 
-# fix grades formate
-    for i in range(0,len(datasets)):
-        grade = datasets[i][2].split()
-        datasets[i][2] = ''
-        for s in grade:
-            datasets[i][2] = datasets[i][2] + s
+    # fix grades formate
+    for element in datasets:
+        grades = element[2].split()
+        element[2] = ''
+        for grade in grades:
+            element[2] = element[2] + grade
     return datasets
 
 def getMedtermGradesFromTable(table):
@@ -57,9 +57,9 @@ def getUpdatesDictionary(last_courses_grades, courses_grades):
 def displayUpdates(updates_dictionary):
     for index, element in enumerate(updates_dictionary):
         if list(updates_dictionary.keys())[index] == 'Midterms Grades':
-            displayMidtermGrades(updates_dictionary, i)
+            displayMidtermGrades(updates_dictionary, index)
         else:
-            displayCourse(updates_dictionary, i)
+            displayCourse(updates_dictionary, index)
 
 
 def displayCourse(courses_grades, i):
@@ -128,7 +128,7 @@ def login_credenalties ():
         username = input("Enter your username : ")
         password = getpass.getpass(prompt="Enter Your Password : ")
         remember_me = input("Remember me ? [yes / no] : ")
-        if(remember_me[0].lower() == 'y'):
+        if remember_me[0].lower() == 'y':
             f = open(".credenalites", "w")
             f.write(username+"\n"+password)
             f.close()
@@ -169,12 +169,11 @@ while True:
             exit()
 
 # fill the dictionary with courses and grades
- 
 courses_grades = {}
 
 if offline_mode:
     with open('.courses_grades.json') as json_file:
-        courses_grades = json.load(json_file) 
+        courses_grades = json.load(json_file)
 else:
     # Get available courses names
     select = Select(browser.find_element_by_xpath('//*[@id="smCrsLst"]'))
@@ -200,9 +199,7 @@ else:
             print('Sorry a problem occurred when we get your grades from GUC server')
             terminal_menu = TerminalMenu(['Try again', 'Get grades from last session', 'Exit'])
             choice_index = terminal_menu.show()
-            if choice_index == 0:
-                continue
-            elif choice_index == 1:
+            if choice_index == 1:
                 with open('.courses_grades.json') as json_file: 
                     courses_grades = json.load(json_file)
                 browser.quit()
