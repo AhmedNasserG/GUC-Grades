@@ -1,61 +1,15 @@
+# IMPORTS
 import os
 import getpass
+import json
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from bs4 import BeautifulSoup as bs
-import json
 from simple_term_menu import TerminalMenu
-from tqdm import tqdm 
+from alive_progress import alive_bar
 
-
-# Credenalites
-if not os.path.isfile(".credenalites"):
-    username = input("Enter your username : ")
-    password = getpass.getpass(prompt="Enter Your Password : ")
-    remember_me = input("Remember me ? [yes / no] : ")
-    if(remember_me[0].lower() == 'y'):
-        f = open(".credenalites", "w")
-        f.write(username+"\n"+password)
-        f.close()
-else:
-    f = open(".credenalites", "r")
-    lines = f.readlines()
-    username = lines[0].strip()
-    password = lines[1].strip()
-    f.close()
-
-
-# connect
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("headless")
-
-browser = webdriver.Chrome(options=chrome_options)
-
-offline_mode = False
-
-while True:
-    try:
-        browser.get(f'http://{username}:{password}@student.guc.edu.eg/external/student/grade/CheckGrade.aspx')
-        break
-    except :
-        print('Sorry there is a problem in connecting with GUC server')
-        terminal_menu = TerminalMenu(['Try again', 'Get grades from last session', 'Exit'])
-        choice_index = terminal_menu.show()
-        if choice_index == 0:
-            continue
-        elif choice_index == 1:
-            offline_mode = True
-            browser.quit()
-            break
-        else:
-            browser.quit()
-            os.system('clear')
-            exit()
-
-
-
-# Extact Data from html table of grades
 def getDataFromTable(table):
+    ''' Extact Data from html table of grades '''
     table_soup = bs(table, 'html.parser')
     datasets = []
     for row in table_soup.find_all("tr")[1:]:
@@ -63,18 +17,17 @@ def getDataFromTable(table):
         for item in row.find_all('td'):
             element.append(item.text.strip())
         datasets.append(element)
-    
+
     # fix grades formate
-    for i in range(0,len(datasets)):
-        grade = datasets[i][2].split()
-        datasets[i][2] = ''
-        for s in grade:
-            datasets[i][2] = datasets[i][2] + s
+    for element in datasets:
+        grades = element[2].split()
+        element[2] = ''
+        for grade in grades:
+            element[2] = element[2] + grade
     return datasets
 
-
-# get Midterm Grades from html table
 def getMedtermGradesFromTable(table):
+    ''' get Midterm Grades from html table'''
     table_soup = bs(table, 'html.parser')
     datasets = []
     for row in table_soup.find_all("tr")[1:]:
@@ -84,92 +37,34 @@ def getMedtermGradesFromTable(table):
         datasets.append(element)
     return datasets
 
-
-
-# fill the dictionary with courses and grades
- 
-courses_grades = {}
-
-if offline_mode:
-    with open('.courses_grades.json') as json_file: 
-        courses_grades = json.load(json_file) 
-else:
-    # Get available courses names
-    select = Select(browser.find_element_by_xpath('//*[@id="smCrsLst"]'))
-    courses = [x.text for x in browser.find_elements_by_tag_name("option")]
-
-
-    # Get midterm grades
-    courses_grades['Midterms Grades'] = getMedtermGradesFromTable(browser.find_element_by_xpath('//*[@id="midDg"]').get_attribute('outerHTML'))
-
-    while True:
-        try:
-            # Get courses grades
-            for i in tqdm(range(1, len(courses)),desc ="Getting Grades"):
-                select = Select(browser.find_element_by_xpath('//*[@id="smCrsLst"]'))
-                select.select_by_index(i)
-                courses_grades[courses[i]] = getDataFromTable(browser.find_element_by_xpath('//*[@id="nttTr"]/td/table').get_attribute('outerHTML'))
-
-            # Close the driver
-            browser.quit()
-            break
-        except:
-            print('Sorry a problem occurred when we get your grades from GUC server')
-            terminal_menu = TerminalMenu(['Try again', 'Get grades from last session', 'Exit'])
-            choice_index = terminal_menu.show()
-            if choice_index == 0:
-                continue
-            elif choice_index == 1:
-                with open('.courses_grades.json') as json_file: 
-                    courses_grades = json.load(json_file)
-                browser.quit()
-                break
-            else:
-                browser.quit()
-                os.system('clear')
-                exit() 
-
-# getting new updates in grades if there are any and return them as a dictionary
 def getUpdatesDictionary(last_courses_grades, courses_grades):
+    '''getting new updates in grades if there are any and return them as a dictionary'''
     updates = {}
     for course, elements in courses_grades.items():
         elements = sorted(elements)
         last_courses_grades[course] = sorted(last_courses_grades[course])
         course_updates = []
-        for i in elements:
+        for element in elements:
             try:
-                last_courses_grades[course].index(i)
+                last_courses_grades[course].index(element)
             except:
-                course_updates.append(i)
+                course_updates.append(element)
         if len(course_updates) != 0:
             updates[course] = course_updates
     return updates
 
 
-updates_dictionary = {}
-
-if not os.path.isfile(".courses_grades.json"):
-    with open('.courses_grades.json', 'w') as file:
-        file.write(json.dumps(courses_grades))
-else:
-    with open('.courses_grades.json') as json_file: 
-        last_courses_grades = json.load(json_file) 
-    updates_dictionary = getUpdatesDictionary(last_courses_grades, courses_grades)
-    if len(updates_dictionary) != 0:
-        with open('.courses_grades.json', 'w') as file:
-            file.write(json.dumps(courses_grades))
-        
-    
 def displayUpdates(updates_dictionary):
-    for i in range(0, len(updates_dictionary)):
-        if list(updates_dictionary.keys())[i] == 'Midterms Grades':
-            displayMidtermGrades(updates_dictionary, i)
+    for index, element in enumerate(updates_dictionary):
+        if list(updates_dictionary.keys())[index] == 'Midterms Grades':
+            displayMidtermGrades(updates_dictionary, index)
         else:
-            displayCourse(updates_dictionary, i)
+            displayCourse(updates_dictionary, index)
 
 
-# Display Courses on the terminal
 def displayCourse(courses_grades, i):
+    ''' Display Courses on the terminal'''
+    os.system("clear")
     course_name = list(courses_grades.keys())[i]
     lines = courses_grades.get(course_name)
 
@@ -189,14 +84,10 @@ def displayCourse(courses_grades, i):
 
     print('\n')
 
-## print all courses
-# for i in range(0,len(list(courses_grades.keys()))):
-#     displayCourse(courses_grades, i)
 
-
-
-# Display Midterm Grades
 def displayMidtermGrades(courses_grades, i):
+    ''' Display Midterm Grades'''
+    os.system("clear")
     key = list(courses_grades.keys())[i]
     lines = courses_grades.get(key)
     print('-' * len(key))
@@ -213,12 +104,10 @@ def displayMidtermGrades(courses_grades, i):
 
     print('\n')
 
-
-
-
 # Display interactive menu
+
 def displayCourseInteractive(courses_grades):
-    os.system('clear')
+    os.system("clear")
     shift_in_case_of_update = 0
     options = list(courses_grades.keys())
     if len(updates_dictionary) != 0:
@@ -232,15 +121,122 @@ def displayCourseInteractive(courses_grades):
         displayMidtermGrades(courses_grades, 0)
     else:
         displayCourse(courses_grades, choice_index - shift_in_case_of_update)
+
+def login_credenalties ():
+    ''' loin to GUC portal'''
+    if not os.path.isfile(".credenalites"):
+        username = input("Enter your username : ")
+        password = getpass.getpass(prompt="Enter Your Password : ")
+        remember_me = input("Remember me ? [yes / no] : ")
+        if remember_me[0].lower() == 'y':
+            f = open(".credenalites", "w")
+            f.write(username+"\n"+password)
+            f.close()
+    else:
+        f = open(".credenalites", "r")
+        lines = f.readlines()
+        username = lines[0].strip()
+        password = lines[1].strip()
+        f.close()
+    return username, password    
+
+offline_mode = False
+
+# CREDENALITES
+username, password = login_credenalties()
+# selenium
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("headless")
+browser = webdriver.Chrome(options=chrome_options)
+
 while True:
-    displayCourseInteractive(courses_grades)
-    terminal_menu = TerminalMenu(['Choose another', 'Exit', 'Log out'])
-    choice_index = terminal_menu.show()
-    if choice_index == 1:
-        os.system('clear')
-        exit()
-    elif choice_index == 2:
-        if os.path.isfile(".credenalites"):
-            os.remove('.credenalites')
-        os.system('clear')
-        exit()
+    try:
+        browser.get(f'http://{username}:{password}@student.guc.edu.eg/external/student/grade/CheckGrade.aspx/1')
+        break
+    except :
+        print('Sorry there is a problem in connecting with GUC server')
+        terminal_menu = TerminalMenu(['Try again', 'Get grades from last session', 'Exit'])
+        choice_index = terminal_menu.show()
+        if choice_index == 0:
+            continue
+        elif choice_index == 1:
+            offline_mode = True
+            browser.quit()
+            break
+        else:
+            browser.quit()
+            os.system("clear")
+            exit()
+
+# fill the dictionary with courses and grades
+courses_grades = {}
+
+if offline_mode:
+    with open('.courses_grades.json') as json_file:
+        courses_grades = json.load(json_file)
+else:
+    # Get available courses names
+    select = Select(browser.find_element_by_xpath('//*[@id="smCrsLst"]'))
+    courses = [x.text for x in browser.find_elements_by_tag_name("option")]
+
+
+    # Get midterm grades
+    courses_grades['Midterms Grades'] = getMedtermGradesFromTable(browser.find_element_by_xpath('//*[@id="midDg"]').get_attribute('outerHTML'))
+
+    while True:
+        try:
+            # Get courses grades
+            with alive_bar(len(courses) - 1, title='getting grades', bar='circles') as bar:
+                for i in range(1, len(courses)):
+                    select = Select(browser.find_element_by_xpath('//*[@id="smCrsLst"]'))
+                    select.select_by_index(i)
+                    courses_grades[courses[i]] = getDataFromTable(browser.find_element_by_xpath('//*[@id="nttTr"]/td/table').get_attribute('outerHTML'))
+                    bar()
+                # Close the driver
+                browser.quit()
+                break
+        except:
+            print('Sorry a problem occurred when we get your grades from GUC server')
+            terminal_menu = TerminalMenu(['Try again', 'Get grades from last session', 'Exit'])
+            choice_index = terminal_menu.show()
+            if choice_index == 1:
+                with open('.courses_grades.json') as json_file: 
+                    courses_grades = json.load(json_file)
+                browser.quit()
+                break
+            else:
+                browser.quit()
+                os.system("clear")
+                exit() 
+updates_dictionary = {}
+
+if not os.path.isfile(".courses_grades.json"):
+    with open('.courses_grades.json', 'w') as file:
+        file.write(json.dumps(courses_grades))
+else:
+    with open('.courses_grades.json') as json_file: 
+        last_courses_grades = json.load(json_file) 
+    updates_dictionary = getUpdatesDictionary(last_courses_grades, courses_grades)
+    if len(updates_dictionary) != 0:
+        with open('.courses_grades.json', 'w') as file:
+            file.write(json.dumps(courses_grades))
+
+# TODO Welcoming the user
+# TODO handle error (if there is an error user can choose to get grades locally or try again)
+
+
+def main():    
+    while True:
+        displayCourseInteractive(courses_grades)
+        terminal_menu = TerminalMenu(['Choose another', 'Exit', 'Log out'])
+        choice_index = terminal_menu.show()
+        if choice_index == 1:
+            os.system("clear")
+            exit()
+        elif choice_index == 2:
+            if os.path.isfile(".credenalites"):
+                os.remove('.credenalites')
+            os.system("clear")
+            exit()
+if __name__ == "__main__":
+    main()
