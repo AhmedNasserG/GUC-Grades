@@ -106,15 +106,31 @@ else:
     # Get midterm grades
     courses_grades['Midterms Grades'] = getMedtermGradesFromTable(browser.find_element_by_xpath('//*[@id="midDg"]').get_attribute('outerHTML'))
 
-    # Get courses grades
-    for i in tqdm(range(1, len(courses)),desc ="Getting Grades"):
-        select = Select(browser.find_element_by_xpath('//*[@id="smCrsLst"]'))
-        select.select_by_index(i)
-        courses_grades[courses[i]] = getDataFromTable(browser.find_element_by_xpath('//*[@id="nttTr"]/td/table').get_attribute('outerHTML'))
+    while True:
+        try:
+            # Get courses grades
+            for i in tqdm(range(1, len(courses)),desc ="Getting Grades"):
+                select = Select(browser.find_element_by_xpath('//*[@id="smCrsLst"]'))
+                select.select_by_index(i)
+                courses_grades[courses[i]] = getDataFromTable(browser.find_element_by_xpath('//*[@id="nttTr"]/td/table').get_attribute('outerHTML'))
 
-    # Close the driver
-    browser.close()
-
+            # Close the driver
+            browser.close()
+            break
+        except:
+            print('Sorry a problem occurred when we get your grades from GUC server')
+            terminal_menu = TerminalMenu(['Try again', 'Get grades from last session', 'Exit'])
+            choice_index = terminal_menu.show()
+            if choice_index == 0:
+                continue
+            elif choice_index == 1:
+                with open('.courses_grades.json') as json_file: 
+                    courses_grades = json.load(json_file)
+                browser.close()
+                break
+            else:
+                browser.close()
+                exit() 
 
 # getting new updates in grades if there are any and return them as a dictionary
 def getUpdatesDictionary(last_courses_grades, courses_grades):
