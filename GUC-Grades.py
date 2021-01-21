@@ -26,7 +26,6 @@ else:
 
 
 # connect
-
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("headless")
 
@@ -50,12 +49,9 @@ while True:
             break
         else:
             browser.quit()
+            os.system('clear')
             exit()
 
-
-
-# TODO Welcoming the user
-# TODO handle error (if there is an error user can choose to get grades locally or try again)
 
 
 # Extact Data from html table of grades
@@ -130,6 +126,7 @@ else:
                 break
             else:
                 browser.quit()
+                os.system('clear')
                 exit() 
 
 # getting new updates in grades if there are any and return them as a dictionary
@@ -172,7 +169,6 @@ def displayUpdates(updates_dictionary):
 
 
 # Display Courses on the terminal
-
 def displayCourse(courses_grades, i):
     course_name = list(courses_grades.keys())[i]
     lines = courses_grades.get(course_name)
@@ -200,7 +196,6 @@ def displayCourse(courses_grades, i):
 
 
 # Display Midterm Grades
-
 def displayMidtermGrades(courses_grades, i):
     key = list(courses_grades.keys())[i]
     lines = courses_grades.get(key)
@@ -222,8 +217,8 @@ def displayMidtermGrades(courses_grades, i):
 
 
 # Display interactive menu
-
 def displayCourseInteractive(courses_grades):
+    os.system('clear')
     shift_in_case_of_update = 0
     options = list(courses_grades.keys())
     if len(updates_dictionary) != 0:
@@ -237,14 +232,15 @@ def displayCourseInteractive(courses_grades):
         displayMidtermGrades(courses_grades, 0)
     else:
         displayCourse(courses_grades, choice_index - shift_in_case_of_update)
-    
 while True:
     displayCourseInteractive(courses_grades)
     terminal_menu = TerminalMenu(['Choose another', 'Exit', 'Log out'])
     choice_index = terminal_menu.show()
     if choice_index == 1:
+        os.system('clear')
         exit()
     elif choice_index == 2:
         if os.path.isfile(".credenalites"):
             os.remove('.credenalites')
+        os.system('clear')
         exit()
