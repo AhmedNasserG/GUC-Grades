@@ -1,0 +1,5 @@
+selenium
+simple_term_menu
+alive_progress
+beautifulsoup4
+bs4
