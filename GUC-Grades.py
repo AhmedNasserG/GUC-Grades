@@ -31,10 +31,26 @@ chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("headless")
 
 browser = webdriver.Chrome(options=chrome_options)
+while True:
+    try:
+        browser.get(f'http://{username}:{password}@student.guc.edu.eg/external/student/grade/CheckGrade.aspx')
+        break
+    except :
+        print('Sorry there is a problem in connecting with GUC server')
+        terminal_menu = TerminalMenu(['Try again', 'Get grades from last session', 'Exit'])
+        choice_index = terminal_menu.show()
+        if choice_index == 0:
+            continue
+        elif choice_index == 1:
+            print('Coming Soon')
+        else:
+            browser.close()
+            exit()
 
-browser.get(f'http://{username}:{password}@student.guc.edu.eg/external/student/grade/CheckGrade.aspx')
+
 
 # TODO Welcoming the user
+# TODO handle error (if there is an error user can choose to get grades locally or try again)
 
 select = Select(browser.find_element_by_xpath('//*[@id="smCrsLst"]'))
 courses = [x.text for x in browser.find_elements_by_tag_name("option")]
@@ -86,6 +102,8 @@ for i in tqdm(range(1, len(courses)),desc ="Getting Grades"):
     select.select_by_index(i)
     courses_grades[courses[i]] = getDataFromTable(browser.find_element_by_xpath('//*[@id="nttTr"]/td/table').get_attribute('outerHTML'))
 
+
+browser.close()
 
 # getting new updates in grades if there are any and return them as a dictionary
 
