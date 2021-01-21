@@ -46,10 +46,10 @@ while True:
             continue
         elif choice_index == 1:
             offline_mode = True
-            browser.close()
+            browser.quit()
             break
         else:
-            browser.close()
+            browser.quit()
             exit()
 
 
@@ -115,7 +115,7 @@ else:
                 courses_grades[courses[i]] = getDataFromTable(browser.find_element_by_xpath('//*[@id="nttTr"]/td/table').get_attribute('outerHTML'))
 
             # Close the driver
-            browser.close()
+            browser.quit()
             break
         except:
             print('Sorry a problem occurred when we get your grades from GUC server')
@@ -126,10 +126,10 @@ else:
             elif choice_index == 1:
                 with open('.courses_grades.json') as json_file: 
                     courses_grades = json.load(json_file)
-                browser.close()
+                browser.quit()
                 break
             else:
-                browser.close()
+                browser.quit()
                 exit() 
 
 # getting new updates in grades if there are any and return them as a dictionary
