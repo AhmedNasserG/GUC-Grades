@@ -64,7 +64,7 @@ def displayUpdates(updates_dictionary):
 
 def displayCourse(courses_grades, i):
     ''' Display Courses on the terminal'''
-    os.system("clear")
+    os.system('cls' if os.name == 'nt' else 'clear')
     course_name = list(courses_grades.keys())[i]
     lines = courses_grades.get(course_name)
 
@@ -87,7 +87,7 @@ def displayCourse(courses_grades, i):
 
 def displayMidtermGrades(courses_grades, i):
     ''' Display Midterm Grades'''
-    os.system("clear")
+    os.system('cls' if os.name == 'nt' else 'clear')
     key = list(courses_grades.keys())[i]
     lines = courses_grades.get(key)
     print('-' * len(key))
@@ -107,7 +107,7 @@ def displayMidtermGrades(courses_grades, i):
 # Display interactive menu
 
 def displayCourseInteractive(courses_grades):
-    os.system("clear")
+    os.system('cls' if os.name == 'nt' else 'clear')
     shift_in_case_of_update = 0
     options = list(courses_grades.keys())
     if len(updates_dictionary) != 0:
@@ -165,7 +165,7 @@ while True:
             break
         else:
             browser.quit()
-            os.system("clear")
+            os.system('cls' if os.name == 'nt' else 'clear')
             exit()
 
 # fill the dictionary with courses and grades
@@ -206,7 +206,7 @@ else:
                 break
             else:
                 browser.quit()
-                os.system("clear")
+                os.system('cls' if os.name == 'nt' else 'clear')
                 exit() 
 updates_dictionary = {}
 
@@ -231,12 +231,12 @@ def main():
         terminal_menu = TerminalMenu(['Choose another', 'Exit', 'Log out'])
         choice_index = terminal_menu.show()
         if choice_index == 1:
-            os.system("clear")
+            os.system('cls' if os.name == 'nt' else 'clear')
             exit()
         elif choice_index == 2:
             if os.path.isfile(".credenalites"):
                 os.remove('.credenalites')
-            os.system("clear")
+            os.system('cls' if os.name == 'nt' else 'clear')
             exit()
 if __name__ == "__main__":
     main()
