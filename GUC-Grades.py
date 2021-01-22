@@ -1,14 +1,20 @@
 # IMPORTS
 from __future__ import print_function, unicode_literals
-import os
-import sys
+
 import getpass
 import json
+import os
+import sys
+
+from alive_progress import alive_bar
+from bs4 import BeautifulSoup as bs
+from colorama import Fore, Style
+from prettytable import PrettyTable
+from pyfiglet import figlet_format
+from PyInquirer import prompt
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
-from bs4 import BeautifulSoup as bs
-from alive_progress import alive_bar
-from PyInquirer import prompt, print_json
+
 
 def getDataFromTable(table):
     ''' Extact Data from html table of grades '''
@@ -28,6 +34,7 @@ def getDataFromTable(table):
             element[2] = element[2] + grade
     return datasets
 
+
 def getMedtermGradesFromTable(table):
     ''' get Midterm Grades from html table'''
     table_soup = bs(table, 'html.parser')
@@ -38,6 +45,7 @@ def getMedtermGradesFromTable(table):
             element.append(item.text.strip())
         datasets.append(element)
     return datasets
+
 
 def getUpdatesDictionary(last_courses_grades, courses_grades):
     '''getting new updates in grades if there are any and return them as a dictionary'''
@@ -69,18 +77,16 @@ def displayCourse(courses_grades, i):
     os.system('cls' if os.name == 'nt' else 'clear')
     course_name = list(courses_grades.keys())[i]
     lines = courses_grades.get(course_name)
-
-    print('-' * len(course_name))
-    print(course_name)
-    print('-' * len(course_name))
+    result = figlet_format(course_name, font="digital")
+    print(result)
     print('\n')
 
     if len(lines) != 0:
+        t = PrettyTable(['Quiz/Ass', 'Element Name',
+                         'Grade', 'Prof./Lecturer/TA'])
         for line in lines:
-            element = line[0] + ' ' + line[1]
-            grade = line[2]
-            ta = line[3]
-            print ("{:<40} {:<15} {:<20}".format(element, grade, ta))
+            t.add_row([line[0], line[1], line[2], line[3]])
+        print(t)
     else:
         print('## No Grades Appeared till now ##')
     print('\n')
@@ -91,23 +97,22 @@ def displayMidtermGrades(courses_grades, i):
     os.system('cls' if os.name == 'nt' else 'clear')
     key = list(courses_grades.keys())[i]
     lines = courses_grades.get(key)
-    print('-' * len(key))
-    print(key)
-    print('-' * len(key))
+    result = figlet_format(key, font="digital")
+    print(result)
     print('\n')
     if len(lines) != 0:
+        t = PrettyTable(['Course', 'Percentage'])
         for line in lines:
-            course = line[0]
-            grade = line[1]
-            print ("{:<70} {:<10}".format(course, grade))
+            t.add_row([line[0], line[1]])
+        print(t)
     else:
         print('## No Grades Appeared till now ##')
 
     print('\n')
 
-# Display interactive menu
 
 def displayCourseInteractive(courses_grades):
+    ''' display interactive menu '''
     os.system('cls' if os.name == 'nt' else 'clear')
     shift_in_case_of_update = 0
     options = list(courses_grades.keys())
@@ -129,7 +134,8 @@ def displayCourseInteractive(courses_grades):
     else:
         displayCourse(courses_grades, choice_index - shift_in_case_of_update)
 
-def login_credenalties ():
+
+def login_credenalties():
     ''' loin to GUC portal'''
     if not os.path.isfile(".credenalites"):
         username = input("Enter your username : ")
@@ -145,12 +151,20 @@ def login_credenalties ():
         username = lines[0].strip()
         password = lines[1].strip()
         f.close()
-    return username, password    
+    return username, password
+
+
+def welcome():
+    first_name = username.split(".")[0]
+    last_name = username.split(".")[1].split("@")[0]
+    print(
+        f"Welcome : {Fore.GREEN}{first_name.capitalize()} {last_name.capitalize()} {Style.RESET_ALL}")
+
 
 offline_mode = False
-
 # CREDENALITES
 username, password = login_credenalties()
+welcome()
 # selenium
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("headless")
@@ -158,9 +172,10 @@ browser = webdriver.Chrome(options=chrome_options)
 
 while True:
     try:
-        browser.get(f'http://{username}:{password}@student.guc.edu.eg/external/student/grade/CheckGrade.aspx/1')
+        browser.get(
+            f'http://{username}:{password}@student.guc.edu.eg/external/student/grade/CheckGrade.aspx/1')
         break
-    except :
+    except:
         options = ['Try again', 'Get grades from last session', 'Exit']
         print('Sorry there is a problem in connecting with GUC server')
         questions = {
@@ -193,18 +208,20 @@ else:
     select = Select(browser.find_element_by_xpath('//*[@id="smCrsLst"]'))
     courses = [x.text for x in browser.find_elements_by_tag_name("option")]
 
-
     # Get midterm grades
-    courses_grades['Midterms Grades'] = getMedtermGradesFromTable(browser.find_element_by_xpath('//*[@id="midDg"]').get_attribute('outerHTML'))
+    courses_grades['Midterms Grades'] = getMedtermGradesFromTable(
+        browser.find_element_by_xpath('//*[@id="midDg"]').get_attribute('outerHTML'))
 
     while True:
         try:
             # Get courses grades
-            with alive_bar(len(courses) - 1, title='getting grades', bar='circles') as bar:
+            with alive_bar(len(courses) - 1, title='getting grades', bar='filling') as bar:
                 for i in range(1, len(courses)):
-                    select = Select(browser.find_element_by_xpath('//*[@id="smCrsLst"]'))
+                    select = Select(browser.find_element_by_xpath(
+                        '//*[@id="smCrsLst"]'))
                     select.select_by_index(i)
-                    courses_grades[courses[i]] = getDataFromTable(browser.find_element_by_xpath('//*[@id="nttTr"]/td/table').get_attribute('outerHTML'))
+                    courses_grades[courses[i]] = getDataFromTable(browser.find_element_by_xpath(
+                        '//*[@id="nttTr"]/td/table').get_attribute('outerHTML'))
                     bar()
                 # Close the driver
                 browser.quit()
@@ -221,32 +238,32 @@ else:
             terminal_menu = prompt(questions)
             choice_index = options.index(list(terminal_menu.values())[0])
             if choice_index == 1:
-                with open('.courses_grades.json') as json_file: 
+                with open('.courses_grades.json') as json_file:
                     courses_grades = json.load(json_file)
                 browser.quit()
                 break
             else:
                 browser.quit()
                 os.system('cls' if os.name == 'nt' else 'clear')
-                sys.exit() 
+                sys.exit()
 updates_dictionary = {}
 
 if not os.path.isfile(".courses_grades.json"):
     with open('.courses_grades.json', 'w') as file:
         file.write(json.dumps(courses_grades))
 else:
-    with open('.courses_grades.json') as json_file: 
-        last_courses_grades = json.load(json_file) 
-    updates_dictionary = getUpdatesDictionary(last_courses_grades, courses_grades)
+    with open('.courses_grades.json') as json_file:
+        last_courses_grades = json.load(json_file)
+    updates_dictionary = getUpdatesDictionary(
+        last_courses_grades, courses_grades)
     if len(updates_dictionary) != 0:
         with open('.courses_grades.json', 'w') as file:
             file.write(json.dumps(courses_grades))
 
-# TODO Welcoming the user
 # TODO handle error (if there is an error user can choose to get grades locally or try again)
 
 
-def main():    
+def main():
     while True:
         displayCourseInteractive(courses_grades)
         options = ['Choose another', 'Exit', 'Log out']
@@ -266,5 +283,7 @@ def main():
                 os.remove('.credenalites')
             os.system('cls' if os.name == 'nt' else 'clear')
             sys.exit()
+
+
 if __name__ == "__main__":
     main()
