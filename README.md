@@ -17,22 +17,36 @@ It is a simple script based on web scraping idea to save your time while checkin
 5. If any error occurred when connecting to GUC server or fetching your grades the script won't crash, you will be able to try again without closing the script or go to the offline mode or exit
 
 ## Installation
-you will need to install chromedriver if you are on windows [check this](http://jonathansoma.com/lede/foundations-2018/classes/selenium/selenium-windows-install/)
-
-If you are linux user, you will find it in your distro packgae manger 
+### For Linux
 ```bash
+#if you don't have chrome use the following two commands
+$ wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+$ sudo apt install ./google-chrome-stable_current_amd64.deb
+#----------------------------------------------------------
 $ sudo apt install git chromium-chromedriver python3-pip 
 $ git clone https://github.com/AhmedNasserG/GUC-Grades.git
 $ cd GUC-Grades
-$ sudo pip3 install -r requirements.txt (Linux)
-$ pip install -r  requirements.txt (Win)
+$ sudo pip3 install -r requirements.txt
+```
+### For Windows
+if you don't have Python3 [install it from here](https://www.python.org/downloads/)
+if you don't have git [install it from here](https://git-scm.com/download/win)
+if you don't have chrome [install it from here](https://www.google.com/chrome/)
+you will need to install chromedriver [check this](http://jonathansoma.com/lede/foundations-2018/classes/selenium/selenium-windows-install/)
+
+
+```bash
+> git clone https://github.com/AhmedNasserG/GUC-Grades.git
+> cd GUC-Grades
+> pip install -r  requirements.txt
 ```
 ## Usage
 
 ```
 $ python3 GUC-Grades.py
 ```
-> **⚠️ This script is tested only on linux. It's not tested on windows and Mac till now but soon**
+> **⚠️ This script is tested on Linux and Windows. It's not tested on Mac till now but soon**
+> **⚠️ If you face any problem with the script for example it crash in a certain case just add your issue in Github issues section**
 ## DISCLAIMER
 Your login credentials are saved on your local machine. We have no access to them. They are only sent to GUC Admin System.
 
