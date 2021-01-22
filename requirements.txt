@@ -2,4 +2,4 @@ selenium
 alive_progress
 beautifulsoup4
 bs4
-enquiries
+PyInquirer
