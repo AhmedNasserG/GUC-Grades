@@ -7,7 +7,6 @@ import json
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from bs4 import BeautifulSoup as bs
-import enquiries
 from alive_progress import alive_bar
 from PyInquirer import prompt, print_json
 
