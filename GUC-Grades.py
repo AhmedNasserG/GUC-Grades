@@ -1,4 +1,5 @@
 # IMPORTS
+from __future__ import print_function, unicode_literals
 import os
 import sys
 import getpass
@@ -6,8 +7,8 @@ import json
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from bs4 import BeautifulSoup as bs
-from simple_term_menu import TerminalMenu
 from alive_progress import alive_bar
+from PyInquirer import prompt, print_json
 
 def getDataFromTable(table):
     ''' Extact Data from html table of grades '''
@@ -82,7 +83,6 @@ def displayCourse(courses_grades, i):
             print ("{:<40} {:<15} {:<20}".format(element, grade, ta))
     else:
         print('## No Grades Appeared till now ##')
-
     print('\n')
 
 
@@ -114,8 +114,14 @@ def displayCourseInteractive(courses_grades):
     if len(updates_dictionary) != 0:
         options = ['There are new updates in grades check now'] + options
         shift_in_case_of_update = 1
-    terminal_menu = TerminalMenu(options)
-    choice_index = terminal_menu.show()
+    questions = {
+        'type': 'list',
+        'name': 'theme',
+        'message': 'What do you want to do?',
+        'choices': options
+    }
+    terminal_menu = prompt(questions)
+    choice_index = options.index(list(terminal_menu.values())[0])
     if options[choice_index] == 'There are new updates in grades check now':
         displayUpdates(updates_dictionary)
     elif options[choice_index] == 'Midterms Grades':
@@ -155,9 +161,16 @@ while True:
         browser.get(f'http://{username}:{password}@student.guc.edu.eg/external/student/grade/CheckGrade.aspx/1')
         break
     except :
+        options = ['Try again', 'Get grades from last session', 'Exit']
         print('Sorry there is a problem in connecting with GUC server')
-        terminal_menu = TerminalMenu(['Try again', 'Get grades from last session', 'Exit'])
-        choice_index = terminal_menu.show()
+        questions = {
+            'type': 'list',
+            'name': 'theme',
+            'message': 'What do you want to do?',
+            'choices': options
+        }
+        terminal_menu = prompt(questions)
+        choice_index = options.index(list(terminal_menu.values())[0])
         if choice_index == 0:
             continue
         elif choice_index == 1:
@@ -198,8 +211,15 @@ else:
                 break
         except:
             print('Sorry a problem occurred when we get your grades from GUC server')
-            terminal_menu = TerminalMenu(['Try again', 'Get grades from last session', 'Exit'])
-            choice_index = terminal_menu.show()
+            options = ['Try again', 'Get grades from last session', 'Exit']
+            questions = {
+                'type': 'list',
+                'name': 'theme',
+                'message': 'What do you want to do?',
+                'choices': options
+            }
+            terminal_menu = prompt(questions)
+            choice_index = options.index(list(terminal_menu.values())[0])
             if choice_index == 1:
                 with open('.courses_grades.json') as json_file: 
                     courses_grades = json.load(json_file)
@@ -229,8 +249,15 @@ else:
 def main():    
     while True:
         displayCourseInteractive(courses_grades)
-        terminal_menu = TerminalMenu(['Choose another', 'Exit', 'Log out'])
-        choice_index = terminal_menu.show()
+        options = ['Choose another', 'Exit', 'Log out']
+        questions = {
+            'type': 'list',
+            'name': 'theme',
+            'message': 'What do you want to do?',
+            'choices': options
+        }
+        terminal_menu = prompt(questions)
+        choice_index = options.index(list(terminal_menu.values())[0])
         if choice_index == 1:
             os.system('cls' if os.name == 'nt' else 'clear')
             sys.exit()
