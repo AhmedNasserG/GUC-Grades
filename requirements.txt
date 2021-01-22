@@ -5,3 +5,4 @@ bs4
 PyInquirer
 colorama
 pyfiglet
+prettytable

@@ -9,6 +9,7 @@ import sys
 from alive_progress import alive_bar
 from bs4 import BeautifulSoup as bs
 from colorama import Fore, Style
+from prettytable import PrettyTable
 from pyfiglet import figlet_format
 from PyInquirer import prompt
 from selenium import webdriver
@@ -76,16 +77,16 @@ def displayCourse(courses_grades, i):
     os.system('cls' if os.name == 'nt' else 'clear')
     course_name = list(courses_grades.keys())[i]
     lines = courses_grades.get(course_name)
-    result = figlet_format(course_name, font = "digital" ) 
-    print(result) 
+    result = figlet_format(course_name, font="digital")
+    print(result)
     print('\n')
 
     if len(lines) != 0:
+        t = PrettyTable(['Quiz/Ass', 'Element Name',
+                         'Grade', 'Prof./Lecturer/TA'])
         for line in lines:
-            element = line[0] + ' ' + line[1]
-            grade = line[2]
-            ta = line[3]
-            print("{:<40} {:<15} {:<20}".format(element, grade, ta))
+            t.add_row([line[0], line[1], line[2], line[3]])
+        print(t)
     else:
         print('## No Grades Appeared till now ##')
     print('\n')
@@ -96,23 +97,22 @@ def displayMidtermGrades(courses_grades, i):
     os.system('cls' if os.name == 'nt' else 'clear')
     key = list(courses_grades.keys())[i]
     lines = courses_grades.get(key)
-    result = figlet_format(key, font = "digital" ) 
-    print(result) 
+    result = figlet_format(key, font="digital")
+    print(result)
     print('\n')
     if len(lines) != 0:
+        t = PrettyTable(['Course', 'Percentage'])
         for line in lines:
-            course = line[0]
-            grade = line[1]
-            print("{:<70} {:<10}".format(course, grade))
+            t.add_row([line[0], line[1]])
+        print(t)
     else:
         print('## No Grades Appeared till now ##')
 
     print('\n')
 
-# Display interactive menu
-
 
 def displayCourseInteractive(courses_grades):
+    ''' display interactive menu '''
     os.system('cls' if os.name == 'nt' else 'clear')
     shift_in_case_of_update = 0
     options = list(courses_grades.keys())
