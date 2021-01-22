@@ -1,5 +1,6 @@
 # IMPORTS
 import os
+import sys
 import getpass
 import json
 from selenium import webdriver
@@ -166,7 +167,7 @@ while True:
         else:
             browser.quit()
             os.system('cls' if os.name == 'nt' else 'clear')
-            exit()
+            sys.exit()
 
 # fill the dictionary with courses and grades
 courses_grades = {}
@@ -207,7 +208,7 @@ else:
             else:
                 browser.quit()
                 os.system('cls' if os.name == 'nt' else 'clear')
-                exit() 
+                sys.exit() 
 updates_dictionary = {}
 
 if not os.path.isfile(".courses_grades.json"):
@@ -232,11 +233,11 @@ def main():
         choice_index = terminal_menu.show()
         if choice_index == 1:
             os.system('cls' if os.name == 'nt' else 'clear')
-            exit()
+            sys.exit()
         elif choice_index == 2:
             if os.path.isfile(".credenalites"):
                 os.remove('.credenalites')
             os.system('cls' if os.name == 'nt' else 'clear')
-            exit()
+            sys.exit()
 if __name__ == "__main__":
     main()
