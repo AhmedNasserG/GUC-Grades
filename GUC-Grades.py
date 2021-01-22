@@ -1,16 +1,18 @@
 # IMPORTS
 from __future__ import print_function, unicode_literals
-import os
-import sys
+
 import getpass
 import json
-from selenium import webdriver
-from selenium.webdriver.support.ui import Select
-from bs4 import BeautifulSoup as bs
+import os
+import sys
+
 from alive_progress import alive_bar
-from PyInquirer import prompt
+from bs4 import BeautifulSoup as bs
 from colorama import Fore, Style
 from pyfiglet import figlet_format
+from PyInquirer import prompt
+from selenium import webdriver
+from selenium.webdriver.support.ui import Select
 
 
 def getDataFromTable(table):
