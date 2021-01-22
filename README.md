@@ -17,11 +17,15 @@ It is a simple script based on web scraping idea to save your time while checkin
 5. If any error occurred when connecting to GUC server or fetching your grades the script won't crash, you will be able to try again without closing the script or go to the offline mode or exit
 
 ## Installation
+you will need to install chromedriver if you are on windows [check this](http://jonathansoma.com/lede/foundations-2018/classes/selenium/selenium-windows-install/)
+
+If you are linux user, you will find it in your distro packgae manger 
 ```bash
-$ sudo apt install git chromium-chromedriver python3-pip
+$ sudo apt install git chromium-chromedriver python3-pip 
 $ git clone https://github.com/AhmedNasserG/GUC-Grades.git
 $ cd GUC-Grades
-$ sudo pip3 install -r requirements.txt
+$ sudo pip3 install -r requirements.txt (Linux)
+$ pip install -r  requirements.txt (Win)
 ```
 ## Usage
 
