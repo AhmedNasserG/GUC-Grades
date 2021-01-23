@@ -10,7 +10,6 @@ from alive_progress import alive_bar
 from bs4 import BeautifulSoup as bs
 from colorama import Fore, Style
 from prettytable import PrettyTable
-from pyfiglet import figlet_format
 from PyInquirer import prompt
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
@@ -65,6 +64,7 @@ def getUpdatesDictionary(last_courses_grades, courses_grades):
 
 
 def displayUpdates(updates_dictionary):
+    ''' Display new updates in Courses and Midterms grades'''
     for index, element in enumerate(updates_dictionary):
         if list(updates_dictionary.keys())[index] == 'Midterms Grades':
             displayMidtermGrades(updates_dictionary, index)
@@ -77,10 +77,9 @@ def displayCourse(courses_grades, i):
     os.system('cls' if os.name == 'nt' else 'clear')
     course_name = list(courses_grades.keys())[i]
     lines = courses_grades.get(course_name)
-    result = figlet_format(course_name, font="digital")
-    print(result)
+    print(
+        f"Course Name : {Fore.GREEN}{course_name} {Style.RESET_ALL}")
     print('\n')
-
     if len(lines) != 0:
         t = PrettyTable(['Quiz/Ass', 'Element Name',
                          'Grade', 'Prof./Lecturer/TA'])
@@ -97,8 +96,8 @@ def displayMidtermGrades(courses_grades, i):
     os.system('cls' if os.name == 'nt' else 'clear')
     key = list(courses_grades.keys())[i]
     lines = courses_grades.get(key)
-    result = figlet_format(key, font="digital")
-    print(result)
+    print(
+        f"Check : {Fore.GREEN}{key} {Style.RESET_ALL}")
     print('\n')
     if len(lines) != 0:
         t = PrettyTable(['Course', 'Percentage'])
@@ -155,6 +154,7 @@ def login_credenalties():
 
 
 def welcome():
+    '''Display a Welcoming word with user's name'''
     first_name = username.split(".")[0]
     last_name = username.split(".")[1].split("@")[0]
     print(
@@ -260,7 +260,6 @@ else:
         with open('.courses_grades.json', 'w') as file:
             file.write(json.dumps(courses_grades))
 
-# TODO handle error (if there is an error user can choose to get grades locally or try again)
 
 
 def main():
