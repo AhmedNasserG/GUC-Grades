@@ -78,24 +78,6 @@ def displayUpdates(updates_dictionary):
             displayCourse(updates_dictionary, index)
 
 
-# def displayCourse(courses_grades, i):
-#     ''' Display Courses on the terminal'''
-#     os.system('cls' if os.name == 'nt' else 'clear')
-#     course_name = list(courses_grades.keys())[i]
-#     lines = courses_grades.get(course_name)
-#     print(
-#         f"Course Name : {Fore.GREEN}{course_name} {Style.RESET_ALL}")
-#     print('\n')
-#     if len(lines) != 0:
-#         t = PrettyTable(['Quiz/Ass', 'Element Name',
-#                          'Grade', 'Prof./Lecturer/TA'])
-#         for line in lines:
-#             t.add_row([line[0], line[1], line[2], line[3]])
-#         print(t)
-#     else:
-#         print('## No Grades Appeared till now ##')
-#     print('\n')
-
 def displayCourse(courses_grades, i):
     ''' Display Courses on the terminal'''
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -103,10 +85,10 @@ def displayCourse(courses_grades, i):
     lines = courses_grades.get(course_name)
     if len(lines) != 0:
         table = Table(title=course_name)
-        table.add_column('Quiz/Ass', style="cyan")
-        table.add_column('Element Name', style="magenta")
-        table.add_column('Grade', style="green")
-        table.add_column('Prof./Lecturer/TA', style="yellow")
+        table.add_column('Quiz/Ass', style='cyan')
+        table.add_column('Element Name', style='magenta')
+        table.add_column('Grade', style='green')
+        table.add_column('Prof./Lecturer/TA', style='yellow')
         for line in lines:
             table.add_row(line[0], line[1], line[2], line[3])
         console.print(table)
@@ -121,17 +103,15 @@ def displayMidtermGrades(courses_grades, i):
     os.system('cls' if os.name == 'nt' else 'clear')
     key = list(courses_grades.keys())[i]
     lines = courses_grades.get(key)
-    print(
-        f"Check : {Fore.GREEN}{key} {Style.RESET_ALL}")
-    print('\n')
     if len(lines) != 0:
-        t = PrettyTable(['Course', 'Percentage'])
+        table = Table(title=key)
+        table.add_column('Course', style='cyan')
+        table.add_column('Percentage', style='magenta')
         for line in lines:
-            t.add_row([line[0], line[1]])
-        print(t)
+            table.add_row(line[0], line[1])
+        console.print(table)
     else:
-        print('## No Grades Appeared till now ##')
-
+        print(Panel.fit('[bold red]## No Grades Appeared till now ##', title=key))
     print('\n')
 
 
