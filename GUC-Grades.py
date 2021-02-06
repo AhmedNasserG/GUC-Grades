@@ -162,8 +162,9 @@ def welcome():
     '''Display a Welcoming word with user's name'''
     first_name = username.split(".")[0]
     last_name = username.split(".")[1].split("@")[0]
-    print(
-        f"Welcome : {Fore.GREEN}{first_name.capitalize()} {last_name.capitalize()} {Style.RESET_ALL}")
+    # print(
+    #     f"Welcome : {Fore.GREEN}{first_name.capitalize()} {last_name.capitalize()} {Style.RESET_ALL}")
+    print(f'Welcome : [bold green] {first_name.capitalize()} {last_name.capitalize()} [/bold green]')
 
 
 offline_mode = False
