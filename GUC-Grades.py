@@ -94,7 +94,7 @@ def displayCourse(courses_grades, i):
             table.add_row(line[0], line[1], line[2], line[3])
         console.print(table)
     else:
-        print(Panel.fit('[bold red]## No Grades Appeared till now ##', title=course_name))
+        console.print(Panel.fit('[bold red] No Grades Appeared till now ', title=course_name), justify="center")
     print('\n')
 
 
@@ -112,7 +112,8 @@ def displayMidtermGrades(courses_grades, i):
             table.add_row(line[0], line[1])
         console.print(table)
     else:
-        print(Panel.fit('[bold red]## No Grades Appeared till now ##', title=key))
+        console.print(Panel.fit('[bold red] No Grades Appeared till now ', title=key), justify="center")
+
     print('\n')
 
 
@@ -145,11 +146,9 @@ def login_credenalties():
     if not os.path.isfile(".credenalites"):
         username = input("Enter your username : ")
         password = getpass.getpass(prompt="Enter Your Password : ")
-        # remember_me = input("Remember me ? [yes / no] : ")
         remember_me = Confirm.ask("Remember me ?")
         assert remember_me
         if remember_me:
-        # if remember_me[0].lower() == 'y':
             f = open(".credenalites", "w")
             f.write(username+"\n"+password)
             f.close()
@@ -167,6 +166,14 @@ def welcome():
     first_name = username.split(".")[0]
     last_name = username.split(".")[1].split("@")[0]
     console.print(Panel(f'[bold green] {first_name.capitalize()} {last_name.capitalize()} [/bold green]', title="Welcome"), justify="center")
+
+def bye():
+    '''Display a bye word with user's name and ask for staring the project on github'''
+    first_name = username.split(".")[0]
+    console.print(Panel(f''' I hope this script has helped you {first_name.capitalize()}.
+    if you like it support me by staring the project on Github https://github.com/AhmedNasserG/GUC-Grades
+    ''', title="Good Bye"), justify="center")
+
 
 offline_mode = False
 # CREDENALITES
@@ -202,6 +209,7 @@ while True:
         else:
             browser.quit()
             os.system('cls' if os.name == 'nt' else 'clear')
+            bye()
             sys.exit()
 
 # fill the dictionary with courses and grades
@@ -252,6 +260,7 @@ else:
             else:
                 browser.quit()
                 os.system('cls' if os.name == 'nt' else 'clear')
+                bye()
                 sys.exit()
 updates_dictionary = {}
 
@@ -283,11 +292,13 @@ def main():
         choice_index = options.index(list(terminal_menu.values())[0])
         if choice_index == 1:
             os.system('cls' if os.name == 'nt' else 'clear')
+            bye()
             sys.exit()
         elif choice_index == 2:
             if os.path.isfile(".credenalites"):
                 os.remove('.credenalites')
             os.system('cls' if os.name == 'nt' else 'clear')
+            bye()
             sys.exit()
 
 
