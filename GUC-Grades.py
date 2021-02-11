@@ -18,6 +18,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 from rich import print
+from rich.prompt import Confirm
 console = Console()
 
 
@@ -144,8 +145,11 @@ def login_credenalties():
     if not os.path.isfile(".credenalites"):
         username = input("Enter your username : ")
         password = getpass.getpass(prompt="Enter Your Password : ")
-        remember_me = input("Remember me ? [yes / no] : ")
-        if remember_me[0].lower() == 'y':
+        # remember_me = input("Remember me ? [yes / no] : ")
+        remember_me = Confirm.ask("Remember me ?")
+        assert remember_me
+        if remember_me:
+        # if remember_me[0].lower() == 'y':
             f = open(".credenalites", "w")
             f.write(username+"\n"+password)
             f.close()
