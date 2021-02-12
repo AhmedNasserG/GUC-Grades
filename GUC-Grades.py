@@ -8,8 +8,6 @@ import sys
 
 from alive_progress import alive_bar
 from bs4 import BeautifulSoup as bs
-from colorama import Fore, Style
-from prettytable import PrettyTable
 from PyInquirer import prompt
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
@@ -162,6 +160,7 @@ def login_credenalties():
 
 def welcome():
     '''Display a Welcoming word with user's name'''
+    os.system('cls' if os.name == 'nt' else 'clear')
     first_name = username.split(".")[0]
     last_name = username.split(".")[1].split("@")[0]
     console.print(Panel(f'[bold green] {first_name.capitalize()} {last_name.capitalize()} [/bold green]', title="Welcome"), justify="center")
@@ -308,5 +307,4 @@ def main():
 
 
 if __name__ == "__main__":
-    os.system('cls' if os.name == 'nt' else 'clear')
     main()
