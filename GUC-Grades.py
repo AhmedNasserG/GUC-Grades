@@ -194,7 +194,6 @@ while True:
         break
     except:
         options = ['Try again', 'Get grades from last session', 'Exit']
-        # print('Sorry there is a problem in connecting with GUC server')
         error()
         questions = {
             'type': 'list',
@@ -246,7 +245,6 @@ else:
                 browser.quit()
                 break
         except:
-            # print('Sorry a problem occurred when we get your grades from GUC server')
             error()
             options = ['Try again', 'Get grades from last session', 'Exit']
             questions = {
@@ -302,10 +300,13 @@ def main():
         elif choice_index == 2:
             if os.path.isfile(".credenalites"):
                 os.remove('.credenalites')
+            if os.path.isfile(".courses_grades.json"):
+                os.remove('.courses_grades.json')
             os.system('cls' if os.name == 'nt' else 'clear')
             bye()
             sys.exit()
 
 
 if __name__ == "__main__":
+    os.system('cls' if os.name == 'nt' else 'clear')
     main()
