@@ -147,7 +147,6 @@ def login_credenalties():
         username = input("Enter your username : ")
         password = getpass.getpass(prompt="Enter Your Password : ")
         remember_me = Confirm.ask("Remember me ?")
-        assert remember_me
         if remember_me:
             f = open(".credenalites", "w")
             f.write(username+"\n"+password)
@@ -174,6 +173,10 @@ def bye():
     if you like it support me by staring the project on Github https://github.com/AhmedNasserG/GUC-Grades
     ''', title="Good Bye"), justify="center")
 
+def error():
+    '''Display a error screen with user's name'''
+    first_name = username.split(".")[0]
+    console.print(Panel(f'[bold red]  there is a problem in connecting with GUC server [/bold red]', title=f"Sorry {first_name.capitalize()}"), justify="center")
 
 offline_mode = False
 # CREDENALITES
@@ -191,7 +194,8 @@ while True:
         break
     except:
         options = ['Try again', 'Get grades from last session', 'Exit']
-        print('Sorry there is a problem in connecting with GUC server')
+        # print('Sorry there is a problem in connecting with GUC server')
+        error()
         questions = {
             'type': 'list',
             'name': 'theme',
@@ -242,7 +246,8 @@ else:
                 browser.quit()
                 break
         except:
-            print('Sorry a problem occurred when we get your grades from GUC server')
+            # print('Sorry a problem occurred when we get your grades from GUC server')
+            error()
             options = ['Try again', 'Get grades from last session', 'Exit']
             questions = {
                 'type': 'list',
