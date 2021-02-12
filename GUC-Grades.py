@@ -123,14 +123,7 @@ def displayCourseInteractive(courses_grades):
     if len(updates_dictionary) != 0:
         options = ['There are new updates in grades check now'] + options
         shift_in_case_of_update = 1
-    questions = {
-        'type': 'list',
-        'name': 'theme',
-        'message': 'What do you want to do?',
-        'choices': options
-    }
-    terminal_menu = prompt(questions)
-    choice_index = options.index(list(terminal_menu.values())[0])
+    choice_index = showMenu(options)
     if options[choice_index] == 'There are new updates in grades check now':
         displayUpdates(updates_dictionary)
     elif options[choice_index] == 'Midterms Grades':
@@ -177,6 +170,16 @@ def error():
     first_name = username.split(".")[0]
     console.print(Panel(f'[bold red]  there is a problem in connecting with GUC server [/bold red]', title=f"Sorry {first_name.capitalize()}"), justify="center")
 
+def showMenu(options):
+    questions = {
+                'type': 'list',
+                'name': 'theme',
+                'message': 'What do you want to do?',
+                'choices': options
+     }
+    terminal_menu = prompt(questions)
+    return options.index(list(terminal_menu.values())[0])
+
 offline_mode = False
 # CREDENALITES
 username, password = login_credenalties()
@@ -192,16 +195,9 @@ while True:
             f'http://{username}:{password}@student.guc.edu.eg/external/student/grade/CheckGrade.aspx/1')
         break
     except:
-        options = ['Try again', 'Get grades from last session', 'Exit']
         error()
-        questions = {
-            'type': 'list',
-            'name': 'theme',
-            'message': 'What do you want to do?',
-            'choices': options
-        }
-        terminal_menu = prompt(questions)
-        choice_index = options.index(list(terminal_menu.values())[0])
+        options = ['Try again', 'Get grades from last session', 'Exit']
+        choice_index = showMenu(options)
         if choice_index == 0:
             continue
         elif choice_index == 1:
@@ -246,14 +242,7 @@ else:
         except:
             error()
             options = ['Try again', 'Get grades from last session', 'Exit']
-            questions = {
-                'type': 'list',
-                'name': 'theme',
-                'message': 'What do you want to do?',
-                'choices': options
-            }
-            terminal_menu = prompt(questions)
-            choice_index = options.index(list(terminal_menu.values())[0])
+            choice_index = showMenu(options)
             if choice_index == 1:
                 with open('.courses_grades.json') as json_file:
                     courses_grades = json.load(json_file)
@@ -284,14 +273,7 @@ def main():
     while True:
         displayCourseInteractive(courses_grades)
         options = ['Choose another', 'Exit', 'Log out']
-        questions = {
-            'type': 'list',
-            'name': 'theme',
-            'message': 'What do you want to do?',
-            'choices': options
-        }
-        terminal_menu = prompt(questions)
-        choice_index = options.index(list(terminal_menu.values())[0])
+        choice_index = showMenu(options)
         if choice_index == 1:
             os.system('cls' if os.name == 'nt' else 'clear')
             bye()
