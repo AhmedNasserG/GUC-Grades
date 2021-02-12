@@ -19,6 +19,8 @@ from rich import print
 from rich.prompt import Confirm
 console = Console()
 
+# TODO auth method
+# TODO Ctrl-C to exit
 
 def getDataFromTable(table):
     ''' Extact Data from html table of grades '''
@@ -176,8 +178,11 @@ def showMenu(options):
                 'name': 'theme',
                 'message': 'What do you want to do?',
                 'choices': options
-     }
-    terminal_menu = prompt(questions)
+    }
+    while (True):
+        terminal_menu = prompt(questions)
+        if len(list(terminal_menu.values())) != 0:
+            break
     return options.index(list(terminal_menu.values())[0])
 
 offline_mode = False
