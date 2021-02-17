@@ -136,16 +136,16 @@ def displayCourseInteractive(courses_grades):
 
 def login_credenalties():
     ''' loin to GUC portal'''
-    if not os.path.isfile(".credenalites"):
+    if not os.path.isfile(os.path.dirname(__file__)+"/.credenalites"):
         username = input("Enter your username : ")
         password = getpass.getpass(prompt="Enter Your Password : ")
         remember_me = Confirm.ask("Remember me ?")
         if remember_me:
-            f = open(".credenalites", "w")
+            f = open(os.path.dirname(__file__)+"/.credenalites", "w")
             f.write(username+"\n"+password)
             f.close()
     else:
-        f = open(".credenalites", "r")
+        f = open(os.path.dirname(__file__)+"/.credenalites", "r")
         lines = f.readlines()
         username = lines[0].strip()
         password = lines[1].strip()
@@ -292,6 +292,3 @@ def main():
             bye()
             sys.exit()
 
-
-if __name__ == "__main__":
-    main()
