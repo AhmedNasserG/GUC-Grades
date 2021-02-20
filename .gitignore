@@ -1,5 +1,5 @@
 
 # personal files
-
+.secret.key
 .credenalites
 .courses_grades.json
