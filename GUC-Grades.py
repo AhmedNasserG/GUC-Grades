@@ -181,14 +181,13 @@ def login_credenalties():
         if remember_me:
             f = open(".credenalites", "w")
             gen_key()
-            password = encryption(password)
-            f.write(username+"\n"+password)
+            f.write(username+"\n"+encryption(password))
             f.close()
     else:
         f = open(".credenalites", "r")
         lines = f.readlines()
         username = lines[0].strip()
-        password =str(decryption(lines[1].strip()))
+        password =decryption(lines[1].strip())
         f.close()
     return username, password
 
@@ -229,10 +228,10 @@ offline_mode = False
 # CREDENALITES
 username, password = login_credenalties()
 welcome()
-print(password)
 # selenium
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("headless")
+chrome_options.add_argument("ignore-certificate-errors")
 browser = webdriver.Chrome(options=chrome_options)
 
 while True:
