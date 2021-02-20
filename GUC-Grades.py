@@ -1,6 +1,6 @@
 # IMPORTS
 from __future__ import print_function, unicode_literals
-
+from cryptography.fernet import Fernet
 import getpass
 import json
 import os
@@ -134,6 +134,44 @@ def displayCourseInteractive(courses_grades):
         displayCourse(courses_grades, choice_index - shift_in_case_of_update)
 
 
+
+def gen_key():
+    """
+    Generates a key and save it into a file
+    """
+    key = Fernet.generate_key()
+    with open(".secret.key", "wb") as key_file:
+        key_file.write(key)
+
+   
+
+def load_key():
+    return open(".secret.key", "rb").read()
+
+def encryption(txt):
+    """
+    Encrypts a message
+    """
+    key = load_key()
+    encoded_message = txt.encode()
+    f = Fernet(key)
+    encrypted_message = f.encrypt(encoded_message)
+
+    return(encrypted_message.decode())
+
+def decryption(txt):
+
+    """
+    Decrypts an encrypted message
+    """
+    key = load_key()
+    f = Fernet(key)
+    decrypted_message = f.decrypt(txt.encode())
+
+    return(decrypted_message.decode())
+
+
+
 def login_credenalties():
     ''' loin to GUC portal'''
     if not os.path.isfile(".credenalites"):
@@ -142,13 +180,14 @@ def login_credenalties():
         remember_me = Confirm.ask("Remember me ?")
         if remember_me:
             f = open(".credenalites", "w")
-            f.write(username+"\n"+password)
+            gen_key()
+            f.write(username+"\n"+encryption(password))
             f.close()
     else:
         f = open(".credenalites", "r")
         lines = f.readlines()
         username = lines[0].strip()
-        password = lines[1].strip()
+        password =decryption(lines[1].strip())
         f.close()
     return username, password
 
@@ -192,6 +231,7 @@ welcome()
 # selenium
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("headless")
+chrome_options.add_argument("ignore-certificate-errors")
 browser = webdriver.Chrome(options=chrome_options)
 
 while True:

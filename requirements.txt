@@ -3,4 +3,5 @@ alive_progress
 beautifulsoup4
 bs4
 PyInquirer
+cryptography
 rich
