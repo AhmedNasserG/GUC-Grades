@@ -148,25 +148,25 @@ def gen_key():
 def load_key():
     return open(".secret.key", "rb").read()
 
-def encryption(message):
+def encryption(txt):
     """
     Encrypts a message
     """
     key = load_key()
-    encoded_message = message.encode()
+    encoded_message = txt.encode()
     f = Fernet(key)
     encrypted_message = f.encrypt(encoded_message)
 
     return(encrypted_message.decode())
 
-def decryption(message):
+def decryption(txt):
 
     """
     Decrypts an encrypted message
     """
     key = load_key()
     f = Fernet(key)
-    decrypted_message = f.decrypt(message.encode())
+    decrypted_message = f.decrypt(txt.encode())
 
     return(decrypted_message.decode())
 
