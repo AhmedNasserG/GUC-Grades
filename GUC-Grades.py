@@ -19,6 +19,7 @@ from rich import print
 from rich.prompt import Confirm
 console = Console()
 
+# TODO handle if .key is not found
 # TODO auth method
 # TODO Ctrl-C to exit
 
@@ -140,13 +141,13 @@ def gen_key():
     Generates a key and save it into a file
     """
     key = Fernet.generate_key()
-    with open(".secret.key", "wb") as key_file:
+    with open(os.path.dirname(os.path.abspath(__file__))+"/.secret.key", "wb") as key_file:
         key_file.write(key)
 
    
 
 def load_key():
-    return open(".secret.key", "rb").read()
+    return open(os.path.dirname(os.path.abspath(__file__))+"/.secret.key", "rb").read()
 
 def encryption(txt):
     """
@@ -174,17 +175,17 @@ def decryption(txt):
 
 def login_credenalties():
     ''' loin to GUC portal'''
-    if not os.path.isfile(os.path.dirname(__file__)+"/.credenalites"):
+    if not os.path.isfile(os.path.dirname(os.path.abspath(__file__))+"/.credenalites"):
         username = input("Enter your username : ")
         password = getpass.getpass(prompt="Enter Your Password : ")
         remember_me = Confirm.ask("Remember me ?")
         if remember_me:
-            f = open(os.path.dirname(__file__)+"/.credenalites", "w")
+            f = open(os.path.dirname(os.path.abspath(__file__))+"/.credenalites", "w")
             gen_key()
             f.write(username+"\n"+encryption(password))
             f.close()
     else:
-        f = open(os.path.dirname(__file__)+"/.credenalites", "r")
+        f = open(os.path.dirname(os.path.abspath(__file__))+"/.credenalites", "r")
         lines = f.readlines()
         username = lines[0].strip()
         password =decryption(lines[1].strip())
@@ -259,7 +260,7 @@ while True:
 courses_grades = {}
 
 if offline_mode:
-    with open(os.path.dirname(__file__)+'/.courses_grades.json') as json_file:
+    with open(os.path.dirname(os.path.abspath(__file__))+'/.courses_grades.json') as json_file:
         courses_grades = json.load(json_file)
 else:
     # Get available courses names
@@ -289,7 +290,7 @@ else:
             options = ['Try again', 'Get grades from last session', 'Exit']
             choice_index = showMenu(options)
             if choice_index == 1:
-                with open(os.path.dirname(__file__)+'/.courses_grades.json') as json_file:
+                with open(os.path.dirname(os.path.abspath(__file__))+'/.courses_grades.json') as json_file:
                     courses_grades = json.load(json_file)
                 browser.quit()
                 break
@@ -300,16 +301,16 @@ else:
                 sys.exit()
 updates_dictionary = {}
 
-if not os.path.isfile(os.path.dirname(__file__)+"/.courses_grades.json"):
-    with open(os.path.dirname(__file__)+'/.courses_grades.json', 'w') as file:
+if not os.path.isfile(os.path.dirname(os.path.abspath(__file__))+"/.courses_grades.json"):
+    with open(os.path.dirname(os.path.abspath(__file__))+'/.courses_grades.json', 'w') as file:
         file.write(json.dumps(courses_grades))
 else:
-    with open(os.path.dirname(__file__)+'/.courses_grades.json') as json_file:
+    with open(os.path.dirname(os.path.abspath(__file__))+'/.courses_grades.json') as json_file:
         last_courses_grades = json.load(json_file)
     updates_dictionary = getUpdatesDictionary(
         last_courses_grades, courses_grades)
     if len(updates_dictionary) != 0:
-        with open(os.path.dirname(__file__)+'/.courses_grades.json', 'w') as file:
+        with open(os.path.dirname(os.path.abspath(__file__))+'/.courses_grades.json', 'w') as file:
             file.write(json.dumps(courses_grades))
 
 
@@ -324,10 +325,10 @@ def main():
             bye()
             sys.exit()
         elif choice_index == 2:
-            if os.path.isfile(os.path.dirname(__file__)+"/.credenalites"):
-                os.remove(os.path.dirname(__file__)+'/.credenalites')
-            if os.path.isfile(os.path.dirname(__file__)+"/.courses_grades.json"):
-                os.remove(os.path.dirname(__file__)+'/.courses_grades.json')
+            if os.path.isfile(os.path.dirname(os.path.abspath(__file__))+"/.credenalites"):
+                os.remove(os.path.dirname(os.path.abspath(__file__))+'/.credenalites')
+            if os.path.isfile(os.path.dirname(os.path.abspath(__file__))+"/.courses_grades.json"):
+                os.remove(os.path.dirname(os.path.abspath(__file__))+'/.courses_grades.json')
             os.system('cls' if os.name == 'nt' else 'clear')
             bye()
             sys.exit()
