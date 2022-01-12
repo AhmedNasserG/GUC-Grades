@@ -235,7 +235,7 @@ username, password = login_credenalties()
 welcome()
 # selenium
 chrome_options = webdriver.ChromeOptions()
-#chrome_options.add_argument("headless")
+chrome_options.add_argument("headless")
 chrome_options.add_argument("ignore-certificate-errors")
 browser = webdriver.Chrome(options=chrome_options)
 
