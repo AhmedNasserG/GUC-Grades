@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup as bs
 from PyInquirer import prompt
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.by import By
 
 from rich.console import Console
 from rich.table import Table
@@ -19,6 +20,9 @@ from rich import print
 from rich.prompt import Confirm
 console = Console()
 
+# TODO handle [\,/,$,-]
+# TODO handle different num of courses in update
+# TODO remove json at logging out
 # TODO handle if .key is not found
 # TODO auth method
 # TODO Ctrl-C to exit
@@ -174,7 +178,7 @@ def decryption(txt):
 
 
 def login_credenalties():
-    ''' loin to GUC portal'''
+    ''' login to GUC portal'''
     if not os.path.isfile(os.path.dirname(os.path.abspath(__file__))+"/.credenalites"):
         username = input("Enter your username : ")
         password = getpass.getpass(prompt="Enter Your Password : ")
@@ -231,14 +235,14 @@ username, password = login_credenalties()
 welcome()
 # selenium
 chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("headless")
+#chrome_options.add_argument("headless")
 chrome_options.add_argument("ignore-certificate-errors")
 browser = webdriver.Chrome(options=chrome_options)
 
 while True:
     try:
         browser.get(
-            f'http://{username}:{password}@student.guc.edu.eg/external/student/grade/CheckGrade.aspx/1')
+            f'https://{username}:{password}@student.guc.edu.eg/external/student/grade/CheckGrade.aspx/1')
         break
     except:
         error()
@@ -264,22 +268,23 @@ if offline_mode:
         courses_grades = json.load(json_file)
 else:
     # Get available courses names
-    select = Select(browser.find_element_by_xpath('//*[@id="smCrsLst"]'))
+    
+    select = Select(browser.find_element(By.XPATH,'//*[@id="smCrsLst"]'))
     courses = [x.text for x in browser.find_elements_by_tag_name("option")]
 
     # Get midterm grades
     courses_grades['Midterms Grades'] = getMedtermGradesFromTable(
-        browser.find_element_by_xpath('//*[@id="midDg"]').get_attribute('outerHTML'))
+        browser.find_element(By.XPATH,'//*[@id="midDg"]').get_attribute('outerHTML'))
 
     while True:
         try:
             # Get courses grades
             with alive_bar(len(courses) - 1, title='getting grades', bar='filling') as bar:
                 for i in range(1, len(courses)):
-                    select = Select(browser.find_element_by_xpath(
+                    select = Select(browser.find_element(By.XPATH,
                         '//*[@id="smCrsLst"]'))
                     select.select_by_index(i)
-                    courses_grades[courses[i]] = getDataFromTable(browser.find_element_by_xpath(
+                    courses_grades[courses[i]] = getDataFromTable(browser.find_element(By.XPATH,
                         '//*[@id="nttTr"]/td/table').get_attribute('outerHTML'))
                     bar()
                 # Close the driver
