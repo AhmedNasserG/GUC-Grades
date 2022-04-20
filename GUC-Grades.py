@@ -180,7 +180,13 @@ def decryption(txt):
 def login_credenalties():
     ''' login to GUC portal'''
     if not os.path.isfile(os.path.dirname(os.path.abspath(__file__))+"/.credenalites"):
-        username = input("Enter your username : ")
+        valid = False
+        while(not valid):
+            username = input("Enter your username : ")
+            if (username.count(".") == 1):
+                valid = True
+            else:
+                console.print("incorrect name format, use {FirstName}.{LastName}")
         password = getpass.getpass(prompt="Enter Your Password : ")
         remember_me = Confirm.ask("Remember me ?")
         if remember_me:
