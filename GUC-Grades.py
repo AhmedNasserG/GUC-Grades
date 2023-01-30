@@ -276,7 +276,7 @@ else:
     # Get available courses names
     
     select = Select(browser.find_element(By.XPATH,'//*[@id="smCrsLst"]'))
-    courses = [x.text for x in browser.find_elements_by_tag_name("option")]
+    courses = [x.text for x in browser.find_elements(by=By.TAG_NAME, value="option")]
 
     # Get midterm grades
     courses_grades['Midterms Grades'] = getMedtermGradesFromTable(
