@@ -17,6 +17,7 @@ It is a simple script based on web scraping idea to save your time while checkin
 5. If any error occurred when connecting to GUC server or fetching your grades the script won't crash, you will be able to try again without closing the script or go to the offline mode or exit
 
 ## Installation
+
 ### For Linux
 ```bash
 #if you don't have chrome use the following two commands
@@ -45,7 +46,10 @@ you will need to install chromedriver [check this](http://jonathansoma.com/lede/
 ```
 $ python3 GUC-Grades.py
 ```
+> **⚠️ This script supports up to Python v3.9. Any newer versions of Python will not be able to run it due the changes in `Mapping` collection.**
+> 
 > **⚠️ This script is tested on Linux and Windows. It's not tested on Mac till now but soon**
+> 
 > **⚠️ If you face any problem with the script for example it crash in a certain case just add your issue in Github issues section**
 ## DISCLAIMER
 Your login credentials are saved on your local machine. We have no access to them. They are only sent to GUC Admin System.
